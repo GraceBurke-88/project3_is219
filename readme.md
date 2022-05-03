@@ -8,7 +8,7 @@
 
 
 
-[![Development Workflow][![.github/workflows/dev.yml](https://github.com/GraceBurke-88/project3_is219/actions/workflows/dev.yml/badge.svg)](https://github.com/GraceBurke-88/project3_is219/actions/workflows/dev.yml)
+[![Development Workflow](https://github.com/GraceBurke-88/project3_is219/actions/workflows/dev.yml)
 
 * [Developmental Deployment](https://project-3-is219-d.herokuapp.com)
 
