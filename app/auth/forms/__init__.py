@@ -9,7 +9,9 @@ class login_form(FlaskForm):
     ])
 
     password = PasswordField('Password', [
+
         validators.DataRequired(),
+        #checks min 6 characters, at least one uppercase letter, one lowercase letter and one number:
         validators.length(min=6, max=35)
     ])
     submit = SubmitField()
@@ -23,6 +25,7 @@ class register_form(FlaskForm):
 
     password = PasswordField('Create Password', [
         validators.DataRequired(),
+        validators.Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$", flags=0, message=None),
         validators.EqualTo('confirm', message='Passwords must match'),
 
     ], description="Create a password ")
