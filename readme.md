@@ -1,6 +1,7 @@
 # Project Setup
 
-[![Production Workflow](https://github.com/kaw393939/docker_flask/actions/workflows/prod.yml/badge.svg)](https://github.com/kaw393939/docker_flask/actions/workflows/prod.yml)
+[![Production Workflow 1](https://github.com/GraceBurke-88/project3_is219/actions/workflows/prod.yml/badge.svg)](https://github.com/GraceBurke-88/project3_is219/actions/workflows/prod.yml)
+
 
 * [Production Deployment](https://project-2-is219-prod.herokuapp.com)
 
