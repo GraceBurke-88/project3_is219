@@ -25,8 +25,12 @@ def browse_locations(page):
     data = pagination.items
     try:
         return render_template('browse_locations.html',data=data,pagination=pagination)
+
     except TemplateNotFound:
         abort(404)
+
+
+
 
 @map.route('/locations_datatables/', methods=['GET'])
 def browse_locations_datatables():
