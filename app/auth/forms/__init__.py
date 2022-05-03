@@ -20,7 +20,6 @@ class login_form(FlaskForm):
 class register_form(FlaskForm):
     email = EmailField('Email Address', [
         validators.DataRequired(),
-
     ], description="You need to signup with an email")
 
     password = PasswordField('Create Password', [
@@ -56,7 +55,7 @@ class profile_form(FlaskForm):
 
 class user_edit_form(FlaskForm):
     about = TextAreaField('About', [validators.length(min=6, max=300)],
-                          description="Please add information about yourself")
+description="Please add information about yourself")
     is_admin = BooleanField('Admin', render_kw={'value':'1'})
     submit = SubmitField()
 

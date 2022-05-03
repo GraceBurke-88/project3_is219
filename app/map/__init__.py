@@ -3,10 +3,11 @@ import json
 import logging
 import os
 
-from flask import Blueprint, render_template, abort, url_for, current_app, jsonify
+from flask import Blueprint, render_template, abort, url_for, current_app, jsonify, flash
 from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 
+from app.map.forms import location_edit_form
 from app.db import db
 from app.db.models import Location
 from app.songs.forms import csv_upload
@@ -23,24 +24,60 @@ def browse_locations(page):
     per_page = 10
     pagination = Location.query.paginate(page, per_page, error_out=False)
     data = pagination.items
+    edit_url = ('map.edit_location', [('location_id' , ':id')])
+    #, retrieve_url=retrieve_url, data=data, Location=Location, record_type="Locations"
     try:
-        return render_template('browse_locations.html',data=data,pagination=pagination)
+        return render_template('browse_locations.html',data=data,pagination=pagination, edit_url=edit_url, record_type="Locations", Location=Location)
 
     except TemplateNotFound:
         abort(404)
-
-
-
 
 @map.route('/locations_datatables/', methods=['GET'])
 def browse_locations_datatables():
-
     data = Location.query.all()
-
+    #retrieve_url = ('auth.retrieve_location', [('location_id', ':id')])
+    #edit_url = ('auth.edit_location', [('location_id', ':id')])
+    #add_url = url_for('auth.add_location')
+    #delete_url = ('auth.delete_location', [('location_id', ':id')])
+    # still need add_url=add_url, edit_url=edit_url, delete_url=delete_url
     try:
-        return render_template('browse_locations_datatables.html',data=data)
+        return render_template('browse_locations_datatables.html')
     except TemplateNotFound:
         abort(404)
+
+
+
+@map.route('/locations/<int:location_id>/edit', methods=['POST', 'GET'])
+@login_required
+def edit_location(location_id):
+    location = Location.query.get(location_id)
+    form = location_edit_form(obj=location)
+    if form.validate_on_submit():
+        location.population = form.population.data
+        #user.is_admin = int(form.is_admin.data)
+        db.session.add(location)
+        db.session.commit()
+        flash('Location Edited Successfully', 'success')
+        current_app.logger.info("edited a location")
+        return redirect(url_for('map.browse_locations'))
+    return render_template('location_edit.html', form=form)
+
+
+@map.route('/locations/<int:user_id>')
+def retrieve_location(location_id):
+    location = Location.query.get(location_id)
+    return render_template('profile_view.html', location=location)
+
+"""
+@map.route('/locations/<int:location_id>')
+@login_required
+def retrieve_user(location_id):
+    location = Location.query.get(location_id)
+    return render_template('location_view.html', location=location)
+ """
+
+
+
 
 @map.route('/api/locations/', methods=['GET'])
 def api_locations():
