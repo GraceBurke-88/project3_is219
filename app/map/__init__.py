@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, abort, url_for, current_app, jsoni
 from flask_login import current_user, login_required
 from jinja2 import TemplateNotFound
 
-from app.map.forms import location_edit_form
+from app.map.forms import location_edit_form, create_location_form
 from app.db import db
 from app.db.models import Location
 from app.songs.forms import csv_upload
@@ -25,9 +25,11 @@ def browse_locations(page):
     pagination = Location.query.paginate(page, per_page, error_out=False)
     data = pagination.items
     edit_url = ('map.edit_location', [('location_id' , ':id')])
+    add_url = url_for('map.add_location')
+
     #, retrieve_url=retrieve_url, data=data, Location=Location, record_type="Locations"
     try:
-        return render_template('browse_locations.html',data=data,pagination=pagination, edit_url=edit_url, record_type="Locations", Location=Location)
+        return render_template('browse_locations.html',data=data,pagination=pagination, edit_url=edit_url, record_type="Locations", Location=Location, add_url=add_url)
 
     except TemplateNotFound:
         abort(404)
@@ -35,11 +37,6 @@ def browse_locations(page):
 @map.route('/locations_datatables/', methods=['GET'])
 def browse_locations_datatables():
     data = Location.query.all()
-    #retrieve_url = ('auth.retrieve_location', [('location_id', ':id')])
-    #edit_url = ('auth.edit_location', [('location_id', ':id')])
-    #add_url = url_for('auth.add_location')
-    #delete_url = ('auth.delete_location', [('location_id', ':id')])
-    # still need add_url=add_url, edit_url=edit_url, delete_url=delete_url
     try:
         return render_template('browse_locations_datatables.html')
     except TemplateNotFound:
@@ -61,6 +58,24 @@ def edit_location(location_id):
         current_app.logger.info("edited a location")
         return redirect(url_for('map.browse_locations'))
     return render_template('location_edit.html', form=form)
+
+
+@map.route('/locations/new', methods=['POST', 'GET'])
+@login_required
+def add_location():
+    form = create_location_form()
+    if form.validate_on_submit():
+        title = Location.query.filter_by(title=form.title.data).first()
+        if title is None:
+            location = Location(title=form.title.data, longitude=form.longitude.data, latitude=form.latitude.data, population=form.population.data)
+            db.session.add(location)
+            db.session.commit()
+            flash('Congratulations, you just created a location', 'success')
+            return redirect(url_for('map.browse_locations'))
+        else:
+            flash('Already Exists')
+            return redirect(url_for('map.browse_locations'))
+    return render_template('location_new.html', form=form)
 
 
 @map.route('/locations/<int:user_id>')
