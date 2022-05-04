@@ -16,16 +16,16 @@ class csv_upload(FlaskForm):
 class create_location_form(FlaskForm):
     title = TextAreaField('Location Name', [
         validators.DataRequired(),
-    ], description="You need to signup with a location")
+    ], description="Add a location")
     longitude = TextAreaField('Longitude', [
         validators.DataRequired(),
-    ], description="You need to signup with a longitude")
+    ], description="Add a longitude")
     latitude = TextAreaField('Latitude', [
          validators.DataRequired(),
-    ], description="You need to signup with a latitude")
+    ], description="Add a latitude")
     population = TextAreaField('Population', [
              validators.DataRequired(),
-        ], description="You need to signup with a population")
+        ], description="Add a population")
 
     #is_admin = BooleanField('Admin', render_kw={'value':'1'})
     submit = SubmitField()
